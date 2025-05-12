@@ -19,6 +19,9 @@
       rel="stylesheet"
     />
 
+    <!-- Axios API CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <!-- Vendor CSS Files -->
     <link
       href="assets/vendor/bootstrap/css/bootstrap.min.css"
@@ -54,47 +57,56 @@
           id="profile-overview"
         >
           <h5 class="card-title">Sobre mim</h5>
-          
 
           <h5 class="card-title">Meu perfil</h5>
 
           <div class="row">
             <div class="col-lg-3 col-md-4 label">Nome completo</div>
-            <div class="col-lg-9 col-md-8">Damien Lueilwitz</div>
+            <div class="col-lg-9 col-md-8 full-name">Damien Lueilwitz</div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-3 col-md-4 label">Nome de Utilizador</div>
+            <div class="col-lg-9 col-md-8 username">Damien Lueilwitz</div>
           </div>
 
           <div class="row">
             <div class="col-lg-3 col-md-4 label">Company</div>
-            <div class="col-lg-9 col-md-8">Purdy, Reinger and Harber</div>
+            <div class="col-lg-9 col-md-8 company-address">
+              Purdy, Reinger and Harber
+            </div>
           </div>
 
           <div class="row">
             <div class="col-lg-3 col-md-4 label">Job</div>
-            <div class="col-lg-9 col-md-8">Global Identity Engineer</div>
+            <div class="col-lg-9 col-md-8 job-title">
+              Global Identity Engineer
+            </div>
           </div>
 
           <div class="row">
             <div class="col-lg-3 col-md-4 label">Country</div>
-            <div class="col-lg-9 col-md-8">USA</div>
+            <div class="col-lg-9 col-md-8 contry">USA</div>
           </div>
 
           <div class="row">
             <div class="col-lg-3 col-md-4 label">Address</div>
-            <div class="col-lg-9 col-md-8">
+            <div class="col-lg-9 col-md-8 personal-adress">
               A108 Adam Street, New York, NY 535022
             </div>
           </div>
 
           <div class="row">
             <div class="col-lg-3 col-md-4 label">Phone</div>
-            <div class="col-lg-9 col-md-8">607.287.4987 x65093</div>
+            <div class="col-lg-9 col-md-8 phone">607.287.4987 x65093</div>
           </div>
 
           <div class="row">
             <div class="col-lg-3 col-md-4 label">Email</div>
-            <div class="col-lg-9 col-md-8">k.anderson@example.com</div>
+            <div class="col-lg-9 col-md-8 email">k.anderson@example.com</div>
           </div>
         </div>
+        <button class="btn btn-secondary logout">Logout</button>
       </div>
     </main>
     <!-- End #main -->
@@ -117,5 +129,36 @@
 
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
+    <script>
+      if (sessionStorage.getItem("user")) {
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        document.querySelector(".full-name").textContent = user.name;
+        document.querySelector(".email").textContent = user.email;
+        document.querySelector(".username").textContent = user.username;
+      } else {
+        window.alert("Sessao expirada");
+        window.location.href = "index.html";
+      }
+
+      document.querySelector('.btn.logout').onclick = () => {
+        const jwt = sessionStorage.getItem('token');
+        if(jwt){
+          axios.post('http://localhost:8000/api/cead/v1/logout', {
+            header: {
+              Authorization: `Bearer ${jwt}`,
+            }
+          })
+          .then(function(response) {
+            consle.log(response.data);
+            sessionStorage.removeItem('token');
+          })
+          .catch(function(error) {
+            console.log(error.response.data)
+          });
+        }else {
+          window.location.href = 'index.html';
+        }
+      }
+    </script>
   </body>
 </html>

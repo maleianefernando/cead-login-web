@@ -79,7 +79,7 @@
         const data = response.data;
         const jwt = data.access_token;
         sessionStorage.setItem("token", jwt);
-        console.log(decodeJWT(jwt));
+        redirectTo(`my-account.html`);
       })
       .catch(function (error) {
         const usernameErrors = error.response.data.errors.username;
@@ -96,8 +96,25 @@
           )
             ? errors[field[0]]
             : "";
-          // console.log(errors[field[0]]);
         });
+      });
+  }
+
+  function redirectTo(htmlFilePath) {
+    const jwt = sessionStorage.getItem("token");
+    api
+      .get("/check/auth", {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+      .then(function (response) {
+        const user = response.data;
+        sessionStorage.setItem('user', JSON.stringify(user));
+        window.location.href = `${htmlFilePath}`;
+      })
+      .catch(function(error) {
+        console.log(error.response.data);
       });
   }
 
@@ -107,7 +124,6 @@
     const base64 = jwt.split(".")[1];
     const json = atob(base64);
     return (decoded = JSON.parse(json));
-    // console.log();
   }
 
   function executeSpinner() {
